@@ -1,3 +1,91 @@
 #!/bin/bash
-samtools sort -n -@ 32 /data/tusers.ds/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/HG002.hs37d5.300x_chr20/HG002.hs37d5.300x_chr20.bam -o HG002.hs37d5.300x_chr20_sorted.bam
-samtools fastq -@ 32 HG002.hs37d5.300x_chr20_sorted.bam -1 HG002.hs37d5.300x_chr20_r1.fastq.gz -2 HG002.hs37d5.300x_chr20_r2.fastq.gz -0 /dev/null -s /dev/null -n
+#SBATCH --nodes=1
+#SBATCH --time=24:00:00
+#SBATCH --mem=200G
+#SBATCH -c 64
+#SBATCH --array=1
+#SBATCH --partition=5days
+#SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/bam2fastq-log-%A-%a.out
+
+# Print a little info for debugging
+echo "HOSTNAME: " $(hostname)
+echo "SLURM_JOB_NODELIST: " $SLURM_JOB_NODELIST
+echo "SLURM_JOBID: " $SLURM_JOBID
+echo "SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
+echo "SLURM_ARRAY_JOB_ID: " $SLURM_ARRAY_JOB_ID
+date
+echo ""
+
+# List of input files
+[ -z $FILELIST ] && FILELIST=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/bam2fastq_filelist
+
+# Get files from FILELIST
+echo "Reading filelist..."
+str=`sed "${SLURM_ARRAY_TASK_ID}q;d" $FILELIST`
+# Read the SLURM_ARRAY_TASK_ID'th line from filelist
+# Split line into array
+toks=($str)
+INPUT=${toks[0]}
+
+# Create temporary directory for work
+echo "Creating temporary working dir..."
+TMPDIR=$(mktemp -d -t zhongrenhu-tmp-XXXXXXXX)
+cd $TMPDIR
+echo "Changing wd: " $(pwd)
+echo ""
+
+# Copy inputs to temp dir
+echo "Copying input files to temp directory..."
+[ -z $PREFIX ] && PREFIX=`basename ${INPUT%.bam}`
+[ -z $INPUT_DIR ] && INPUT_DIR=`dirname ${INPUT}`
+[ -z $OUTPUTDIR ] && OUTPUTDIR=$INPUT_DIR
+cp $INPUT .
+echo "Done."
+echo ""
+
+# Get filenames in temp by cutting of the path
+BAM=$(basename $INPUT)
+
+# exporting environment variable and default parameter
+export PATH=/data/tusers/zhongrenhu/Software/gawk-5.1.0/opt/bin:$PATH
+export PATH=/data/tusers/zhongrenhu/Software/TEMP2:$PATH
+export PATH=/data/tusers/zhongrenhu/Software/TEMP2/bin:$PATH
+PATH_ANNO="/data/tusers/yutianx/tongji2/GitHuB/piSet/annotation/hs37d5"
+BWA_INDEX=${PATH_ANNO}/BWAIndex/genome
+GENOME_FA=${PATH_ANNO}/hs37d5.fa
+TE_FA=${PATH_ANNO}/ALUL1SVA.fa
+TE_BED6=${PATH_ANNO}/ALUL1SVA.bed
+
+# Process the data
+echo "Transferring ${BAM} to FASTQ"
+samtools sort -n -@ 32 ${BAM} -o ${PREFIX}.sorted.bam && mv ${PREFIX}.sorted.bam > ${BAM}
+samtools fastq -@ 32 ${BAM} -1 ${PREFIX}_1.fastq.gz -2 ${PREFIX}_2.fastq.gz -0 /dev/null -s /dev/null -n
+
+echo "Realign reads to ${BWA_INDEX}"
+bwa mem -t 32 ${BWA_INDEX} ${PREFIX}_1.fastq.gz ${PREFIX}_2.fastq.gz > ${PREFIX}.sam 2>${PREFIX}.bwamem.log || { echo  "Error: bwa mem failed, please check ${OUTDIR}/${PREFIX}.bwamem.log. Exiting..." && exit 1; }
+
+echo "transform sam to sorted bam and index it"
+samtools view -bhS -@ 32 ${PREFIX}.sam > ${PREFIX}.bam
+samtools sort -@ 32 -o ${PREFIX}.sorted.bam ${PREFIX}.bam
+rm ${PREFIX}.sam ${PREFIX}.bam && mv ${PREFIX}.sorted.bam > ${BAM}
+samtools index -@ 32 ${BAM}
+echo ""
+
+# Copy files to output dir
+echo "Copying results to destination..."
+ls -lh
+cp ./* $OUTPUTDIR/
+echo "Done."
+echo ""
+
+
+# Clean up
+echo "Cleaning up..."
+cd $HOME
+echo "Deleting temp dir: " $TMPDIR
+rm -rd $TMPDIR
+echo "/tmp contents:"
+ls -lh /tmp
+echo ""
+echo "Script complete."
+date
