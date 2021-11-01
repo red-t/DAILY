@@ -57,6 +57,7 @@ while getopts ":l:r:i:I:g:G:R:t:o:c:h" OPTION; do
     esac
 done
 
+export PATH=/data/tusers/zhongrenhu/Software/anaconda3/envs/python27/bin/:$PATH
 PATH_PROG=`dirname ${0}` && PATH_ANNO="/data/tusers/yutianx/tongji2/GitHuB/piSet/annotation/${GENOME}"
 [ -z ${BWA_INDEX} ] && BWA_INDEX=${PATH_ANNO}/BWAIndex/genome
 [ -z ${GENOME_FA} ] && GENOME_FA=${PATH_ANNO}/${GENOME}.fa
