@@ -1,0 +1,3 @@
+#!/bin/bash
+samtools sort -n -@ 32 /data/tusers.ds/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/HG002.hs37d5.300x_chr20/HG002.hs37d5.300x_chr20.bam -o HG002.hs37d5.300x_chr20_sorted.bam
+samtools fastq -@ 32 HG002.hs37d5.300x_chr20_sorted.bam -1 HG002.hs37d5.300x_chr20_r1.fastq.gz -2 HG002.hs37d5.300x_chr20_r2.fastq.gz -0 /dev/null -s /dev/null -n
