@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --time=120:00:00
+#SBATCH --time=12:00:00
 #SBATCH --mem=200G
 #SBATCH -c 64
 #SBATCH --array=1
-#SBATCH --partition=5days
+#SBATCH --partition=12hours
 #SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/logs/TEMP2-log-%A-%a.out
 
 # Print a little info for debugging
