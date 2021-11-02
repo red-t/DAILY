@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --time=24:00:00
+#SBATCH --time=120:00:00
 #SBATCH --mem=200G
 #SBATCH -c 64
 #SBATCH --array=1
@@ -58,7 +58,7 @@ TE_BED6=${PATH_ANNO}/ALUL1SVA.bed
 
 # Process the data
 echo "Transferring ${BAM} to FASTQ"
-samtools sort -n -@ 32 ${BAM} -o ${PREFIX}.sorted.bam && mv ${PREFIX}.sorted.bam > ${BAM}
+samtools sort -n -@ 32 ${BAM} -o ${PREFIX}.sorted.bam && mv ${PREFIX}.sorted.bam ${BAM}
 samtools fastq -@ 32 ${BAM} -1 ${PREFIX}_1.fastq.gz -2 ${PREFIX}_2.fastq.gz -0 /dev/null -s /dev/null -n
 
 echo "Realign reads to ${BWA_INDEX}"
@@ -67,7 +67,7 @@ bwa mem -t 32 ${BWA_INDEX} ${PREFIX}_1.fastq.gz ${PREFIX}_2.fastq.gz > ${PREFIX}
 echo "transform sam to sorted bam and index it"
 samtools view -bhS -@ 32 ${PREFIX}.sam > ${PREFIX}.bam
 samtools sort -@ 32 -o ${PREFIX}.sorted.bam ${PREFIX}.bam
-rm ${PREFIX}.sam ${PREFIX}.bam && mv ${PREFIX}.sorted.bam > ${BAM}
+rm ${PREFIX}.sam ${PREFIX}.bam && mv ${PREFIX}.sorted.bam ${BAM}
 samtools index -@ 32 ${BAM}
 echo ""
 
