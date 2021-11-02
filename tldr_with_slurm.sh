@@ -5,7 +5,7 @@
 #SBATCH -c 64
 #SBATCH --array=1
 #SBATCH --partition=5days
-#SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/tldr-log-%A-%a.out
+#SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/logs/tldr-log-%A-%a.out
 
 # Print a little info for debugging
 echo "HOSTNAME: " $(hostname)
@@ -42,7 +42,7 @@ done
 
 # Parameter initialization
 # List of input files, I make this with ls /path/to/folder/*.suffix | sort | pr -1aT -s' ' > filelist.txt
-[ -z $FILELIST ] && FILELIST=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/filelist
+[ -z $FILELIST ] && FILELIST=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/tldr_filelist
 [ -z $ELTS ] && ELTS=/data/tusers/zhongrenhu/Software/tldr/ref/teref.ont.human.fa
 [ -z $REF ] && REF=/data/tusers/zhongrenhu/for_SMS/reference/hs37d5/hs37d5.fa
 
