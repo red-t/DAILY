@@ -5,7 +5,7 @@
 #SBATCH -c 64
 #SBATCH --array=1
 #SBATCH --partition=5days
-#SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/TEMP2-log-%A-%a.out
+#SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/logs/TEMP2-log-%A-%a.out
 
 # Print a little info for debugging
 echo "HOSTNAME: " $(hostname)
