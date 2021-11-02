@@ -83,7 +83,7 @@ export PATH=$PATH:/data/tusers/zhongrenhu/Software/tldr/tldr/
 
 # Process the data
 echo "Running TLDR insertion2 for ${BAM}"
-tldr -p 24 -b ${BAM} -e ${ELTS} -r ${REF} --color_consensus
+tldr -p 24 -b ${BAM} -e ${ELTS} -r ${REF} --color_consensus -n ${NON_REF}
 echo ""
 
 # Copy files to output dir
