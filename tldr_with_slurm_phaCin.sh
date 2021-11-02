@@ -43,7 +43,7 @@ done
 # Parameter initialization
 # List of input files, I make this with ls /path/to/folder/*.suffix | sort | pr -1aT -s' ' > filelist.txt
 [ -z $FILELIST ] && FILELIST=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/tldr_filelist
-[ -z $ELTS ] && ELTS=/data/tusers.ds/zhongrenhu/for_SMS/reference/phaCin/phaCin.transposon.fa
+[ -z $ELTS ] && ELTS=/data/tusers.ds/zhongrenhu/for_SMS/reference/phaCin/phaCin.transposon_for_tldr.fa
 [ -z $REF ] && REF=/data/tusers.ds/zhongrenhu/for_SMS/reference/phaCin/phaCin.fa
 [ -z $NON_REF ] && NON_REF=/data/tusers.ds/zhongrenhu/for_SMS/reference/phaCin/phaCin.rmsk.bed.gz
 
