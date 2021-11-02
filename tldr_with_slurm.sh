@@ -45,6 +45,7 @@ done
 [ -z $FILELIST ] && FILELIST=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/tldr_filelist
 [ -z $ELTS ] && ELTS=/data/tusers/zhongrenhu/Software/tldr/ref/teref.ont.human.fa
 [ -z $REF ] && REF=/data/tusers/zhongrenhu/for_SMS/reference/hs37d5/hs37d5.fa
+[ -z $NON_REF ] && NON_REF=/data/tusers/zhongrenhu/Software/tldr/ref/nonref.collection.hg19.bed.gz
 
 
 # Get files from FILELIST
