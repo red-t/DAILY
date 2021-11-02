@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --time=120:00:00
+#SBATCH --time=12:00:00
 #SBATCH --mem=220G
 #SBATCH -c 64
 #SBATCH --array=1-2
-#SBATCH --partition=5days
+#SBATCH --partition=12hours
 #SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/logs/tldr-log-%A-%a.out
 
 # Print a little info for debugging
