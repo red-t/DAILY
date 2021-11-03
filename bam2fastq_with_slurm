@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --time=120:00:00
+#SBATCH --time=12:00:00
 #SBATCH --mem=200G
 #SBATCH -c 64
 #SBATCH --array=1
-#SBATCH --partition=5days
+#SBATCH --partition=12hours
 #SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/logs/bam2fastq-log-%A-%a.out
 
 # Print a little info for debugging
@@ -58,17 +58,17 @@ TE_BED6=${PATH_ANNO}/ALUL1SVA.bed
 
 # Process the data
 echo "Transferring ${BAM} to FASTQ"
-samtools sort -n -@ 32 ${BAM} -o ${PREFIX}.sorted.bam && mv ${PREFIX}.sorted.bam ${BAM}
-samtools fastq -@ 32 ${BAM} -1 ${PREFIX}_1.fastq.gz -2 ${PREFIX}_2.fastq.gz -0 /dev/null -s /dev/null -n
+samtools sort -n -@ 48 ${BAM} -o ${PREFIX}.sorted.bam && mv ${PREFIX}.sorted.bam ${BAM}
+samtools fastq -@ 48 ${BAM} -1 ${PREFIX}_1.fastq.gz -2 ${PREFIX}_2.fastq.gz -0 /dev/null -s /dev/null -n
 
 echo "Realign reads to ${BWA_INDEX}"
-bwa mem -t 32 ${BWA_INDEX} ${PREFIX}_1.fastq.gz ${PREFIX}_2.fastq.gz > ${PREFIX}.sam 2>${PREFIX}.bwamem.log || { echo  "Error: bwa mem failed, please check ${OUTDIR}/${PREFIX}.bwamem.log. Exiting..." && exit 1; }
+bwa mem -t 48 ${BWA_INDEX} ${PREFIX}_1.fastq.gz ${PREFIX}_2.fastq.gz > ${PREFIX}.sam 2>${PREFIX}.bwamem.log || { echo  "Error: bwa mem failed, please check ${OUTDIR}/${PREFIX}.bwamem.log. Exiting..." && exit 1; }
 
 echo "transform sam to sorted bam and index it"
-samtools view -bhS -@ 32 ${PREFIX}.sam > ${PREFIX}.bam
-samtools sort -@ 32 -o ${PREFIX}.sorted.bam ${PREFIX}.bam
+samtools view -bhS -@ 48 ${PREFIX}.sam > ${PREFIX}.bam
+samtools sort -@ 48 -o ${PREFIX}.sorted.bam ${PREFIX}.bam
 rm ${PREFIX}.sam ${PREFIX}.bam && mv ${PREFIX}.sorted.bam ${BAM}
-samtools index -@ 32 ${BAM}
+samtools index -@ 48 ${BAM}
 echo ""
 
 # Copy files to output dir
