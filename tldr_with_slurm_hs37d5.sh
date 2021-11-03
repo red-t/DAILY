@@ -3,7 +3,7 @@
 #SBATCH --time=12:00:00
 #SBATCH --mem=220G
 #SBATCH -c 64
-#SBATCH --array=1-2
+#SBATCH --array=1
 #SBATCH --partition=12hours
 #SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/logs/tldr-log-%A-%a.out
 
