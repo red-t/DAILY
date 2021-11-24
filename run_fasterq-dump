@@ -7,7 +7,7 @@ function help_info(){
     echo -e "\t-O <folder>\toutput directory."
     echo -e "\t-e <CPUs>\tnummber of CPU to use."
     echo -e "\t-h \tShow this information"
-    echo -e "\nfor exsample:\nrun_fasterq-dump 'SRR12099790.sra SRR12099789.sra' --split-3 -O ./ -e 10"
+    echo -e "\nfor exsample:\n./run_fasterq-dump 'SRR12099790.sra SRR12099789.sra' --split-3 -O ./ -e 10"
 }
 
 if [ $# -lt 1 ];then

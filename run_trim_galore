@@ -1,0 +1,35 @@
+#! /bin/bash
+
+# help information
+function help_info(){
+    echo `basename $0`" -l '<left fastq>' -r '<right fastq>' -c <cores> -o <folder>"
+    echo -e "\t-l <left fastq>\tleft fastq file(s)."
+    echo -e "\t-r <right fastq>\tright fastq file(s)."
+    echo -e "\t-o <folder>\toutput directory."
+    echo -e "\t-c <cores>\tNumber of cores to be used for trimming."
+    echo -e "\t-h \tShow this information"
+    echo -e "\nfor example:\n./run_trim_galore -l 'SRR*1.fastq' -r 'SRR*2.fastq' -c 20 -o ./"
+}
+
+if [ $# -lt 1 ];then
+    help_info && exit 1
+fi
+
+while getopts ":l:r:c:o:h" OPTION; do
+    case $OPTION in
+        l)  LEFT=($OPTARG);;
+        r)  RIGHT=($OPTARG);;
+        c)  CORES=$OPTARG;;
+        o)  OUT_DIR=$OPTARG;;
+        h)  help_info && exit 1;;
+        *)  help_info && exit 1;;
+    esac
+done
+
+index=0
+for left in ${LEFT[*]}
+do
+echo -e "trim_galore -q 25 --gzip -o $OUT_DIR -j $CORES --paired ${LEFT[$index]} ${RIGHT[$index]}"
+trim_galore -q 25 --gzip -o $OUT_DIR -j $CORES --paired ${LEFT[$index]} ${RIGHT[$index]}
+index=$((${index} + 1))
+done
