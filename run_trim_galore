@@ -30,6 +30,6 @@ index=0
 for left in ${LEFT[*]}
 do
 echo -e "trim_galore -q 25 --gzip -o $OUT_DIR -j $CORES --paired ${LEFT[$index]} ${RIGHT[$index]}"
-trim_galore -q 25 --gzip -o $OUT_DIR -j $CORES --paired ${LEFT[$index]} ${RIGHT[$index]}
+trim_galore -q 25 --gzip --illumina  -o $OUT_DIR -j $CORES --paired ${LEFT[$index]} ${RIGHT[$index]}
 index=$((${index} + 1))
 done
