@@ -79,7 +79,7 @@ TE_FA=${PATH_ANNO}/ALUL1SVA.fa
 TE_BED6=${PATH_ANNO}/ALUL1SVA.bed
 
 # Process the data
-echo "Running TEMP2 insertion2 for ${BAM}"
+echo "Running TEMP2 insertion for ${BAM}"
 mkdir ${PREFIX}
 TEMP2 insertion -l ${LEFT} -r ${RIGHT} -i ${BAM} -g ${GENOME_FA} -R ${TE_FA} -t ${TE_BED6} -o ${PREFIX} -p ${PREFIX} -c 32 -M 2 -m 10 -U 0.95 -S -A #-d
 echo ""
