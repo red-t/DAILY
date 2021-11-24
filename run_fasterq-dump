@@ -25,7 +25,7 @@ while getopts ":a:O:e:h" OPTION; do
 done
 
 
-for sra in ${SRAs}
+for sra in ${SRAs[*]}
 do
     accession=`basename ${sra%.sra}`
     fasterq-dump ${accession} --split-3 -O ${OUT_PATH} -e ${CPU}
