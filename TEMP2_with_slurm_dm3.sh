@@ -3,7 +3,7 @@
 #SBATCH --time=12:00:00
 #SBATCH --mem=100G
 #SBATCH -c 64
-#SBATCH --array=1
+#SBATCH --array=1-4
 #SBATCH --partition=12hours
 #SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TEMP2_result/logs/TEMP2-log-%A-%a.out
 
