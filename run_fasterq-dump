@@ -1,0 +1,7 @@
+#! /bin/bash
+
+for sra_file in ${1}
+do
+    accession=`basename ${sra_file%.sra}`
+    fasterq-dump ${accession} --split-3 -O ./ -e 10
+done
