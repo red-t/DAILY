@@ -1,7 +1,35 @@
 #! /bin/bash
 
-for sra_file in ${1}
-do
-    accession=`basename ${sra_file%.sra}`
-    fasterq-dump ${accession} --split-3 -O ./ -e 10
+# help information
+function help_info(){
+    echo `basename $0`" -a '<SRA(s)>' -O <folder> -e <CPUs>"
+    echo -e "\t-a <SRA(s)>\tSRA file(s) download by ."
+    echo -e "\t-O <folder>\toutput directory."
+    echo -e "\t-e <CPUs>\tnummber of CPU to use."
+    echo -e "\t-h \tShow this information"
+    echo -e "for exsample:\nrun_fasterq-dump 'SRR12099790.sra SRR12099789.sra' --split-3 -O ./ -e 10"
+}
+
+if [ $# -lt 1 ];then
+    help_info && exit 1
+fi
+
+while getopts ":a:O:e:h" OPTION; do
+    case $OPTION in
+        a)  SRAs=($OPTARG);;
+        O)  OUT_PATH=$OPTARG;;
+        e)  CPU=$OPTARG;;
+        h)  help_info && exit 1;;
+        *)  help_info && exit 1;;
+    esac
 done
+
+
+for sra in ${SRAs}
+do
+    accession=`basename ${sra%.sra}`
+    fasterq-dump ${accession} --split-3 -O ${OUT_PATH} -e ${CPU}
+done
+
+# before running this script, you should download SRA file(s) through prefetch: `prefetch -O . SRR_Acc_List.txt`
+# before running this script, you should run fastqc to check if the data should undergo adaptor trimming or other filteration.
