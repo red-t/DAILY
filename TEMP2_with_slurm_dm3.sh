@@ -38,7 +38,7 @@ echo ""
 
 # Copy inputs to temp dir
 echo "Copying input files to temp directory..."
-PREFIX=`basename ${LEFT%_1.fq.gz}` && INPUT_DIR=`dirname ${INPUT}`
+PREFIX=`basename ${LEFT%_1.fq.gz}` && INPUT_DIR=`dirname ${LEFT}`
 cp $LEFT $RIGHT .
 echo "Done."
 echo ""
@@ -63,7 +63,6 @@ echo ""
 # Copy files to output dir
 echo "Copying results to destination..."
 ls -lh
-rm ${LEFT} ${RIGHT}
 cp -r ${PREFIX} $OUTPUTDIR/
 echo "Done."
 echo ""

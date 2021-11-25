@@ -59,7 +59,7 @@ TE_BED6=${PATH_ANNO}/ALUL1SVA.bed
 # Process the data
 echo "Transferring ${BAM} to FASTQ"
 samtools sort -n -@ 48 ${BAM} -o ${PREFIX}.sorted.bam && mv ${PREFIX}.sorted.bam ${BAM}
-samtools fastq -@ 48 ${BAM} -1 ${PREFIX}_1.fastq.gz -2 ${PREFIX}_2.fastq.gz -0 /dev/null -s /dev/null -n
+samtools fastq -@ 48 -t ${BAM} -1 ${PREFIX}_1.fastq.gz -2 ${PREFIX}_2.fastq.gz -0 /dev/null -s /dev/null -n
 
 echo "Realign reads to ${BWA_INDEX}"
 bwa mem -t 48 ${BWA_INDEX} ${PREFIX}_1.fastq.gz ${PREFIX}_2.fastq.gz > ${PREFIX}.sam 2>${PREFIX}.bwamem.log || { echo  "Error: bwa mem failed, please check ${OUTDIR}/${PREFIX}.bwamem.log. Exiting..." && exit 1; }
