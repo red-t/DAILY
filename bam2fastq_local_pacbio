@@ -3,7 +3,7 @@
 # Process the data
 echo "Transferring $1 to FASTQ"
 PREFIX=`basename ${1%.bam}`
-samtools sort -n -@ 24 $1 -o ${PREFIX}.sorted.bam && mv ${PREFIX}.sorted.bam $1
-samtools fastq -@ 24 -t $1 -0 /dev/null > $PREFIX.fq.gz
+# samtools sort -n -@ 24 $1 -o ${PREFIX}.sorted.bam && mv ${PREFIX}.sorted.bam $1
+samtools bam2fq -@ 24 $1 > $PREFIX.fastq
 echo "Done."
 echo ""
