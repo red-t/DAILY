@@ -54,6 +54,8 @@ done
 [ -z $FILELIST ] && FILELIST=/data/tusers.ds/zhongrenhu/for_SMS/dna_pipline/TLDR_result/minimap2_filelist
 [ -z $SAM_FORMAT ] && SAM_FORMAT=1
 [ -z $THREADS ] && THREADS=32
+[ -z $PRESET ] && PRESET='map-ont'
+[ -z $REF_FASTA ] && REF_FASTA=/data/tusers.ds/zhongrenhu/for_SMS/reference/phaCin/phaCin.fa
 
 # Get files from FILELIST
 echo "Reading filelist..."
@@ -61,9 +63,7 @@ str=`sed "${SLURM_ARRAY_TASK_ID}q;d" $FILELIST`
 # Read the SLURM_ARRAY_TASK_ID'th line from filelist
 # Split line into array
 toks=($str)
-REF_FASTA=${toks[0]}
-FASTQ=${toks[1]}
-PRESET=${toks[2]}
+INPUT=${toks[0]}
 
 # Create temporary directory for work
 echo "Creating temporary working dir..."
@@ -73,14 +73,14 @@ echo "Changing wd: " $(pwd)
 echo ""
 
 # Copy inputs to temp dir
-echo "Copying input file ${FASTQ} to temp directory..."
-cp $FASTQ .
+echo "Copying input files to temp directory..."
+cp $INPUT .
 echo "Done."
 echo ""
 
 # Get filenames in temp by cutting of the path
-PREFIX=`basename ${FASTQ%.f*q*}` && QUERY_FASTQ=`basename $FASTQ`
-[ -z $OUTPUTDIR ] && OUTPUTDIR=`dirname $FASTQ`
+PREFIX=`basename ${INPUT%.f*q*}` && QUERY_FASTQ=`basename $INPUT`
+[ -z $OUTPUTDIR ] && OUTPUTDIR=`dirname $INPUT`
 
 # exporting environment variable and default parameter
 export PATH=/data/tusers/zhongrenhu/Software/anaconda3/bin:$PATH
@@ -92,7 +92,7 @@ export PATH=$PATH:/data/tusers/zhongrenhu/Software/tldr/tldr/
 # Process the data
 echo "Running minimap2 for ${PREFIX}"
 if [ -n $SAM_FORMAT ];then
-    minimap2 -ax $PRESET --MD -t $THREADS $REF_FASTA $QUERY_FASTQ > $PREFIX.sam
+    minimap2 -a -x $PRESET --MD -t $THREADS $REF_FASTA $QUERY_FASTQ > $PREFIX.sam
     samtools view -bhS -@ $THREADS $PREFIX.sam | samtools sort -@ $THREADS -o $PREFIX.bam -
     else
     minimap2 -x $PRESET --MD -t $THREADS $REF_FASTA $QUERY_FASTQ > $PREFIX.paf
