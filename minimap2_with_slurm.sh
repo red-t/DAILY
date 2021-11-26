@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --time=120:00:00
+#SBATCH --time=12:00:00
 #SBATCH --mem=220G
 #SBATCH -c 64
-#SBATCH --array=1-2
-#SBATCH --partition=5days
+#SBATCH --array=1-4
+#SBATCH --partition=12hours
 #SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/logs/minimap2-log-%A-%a.out
 
 # Print a little info for debugging
@@ -94,6 +94,7 @@ echo "Running minimap2 for ${PREFIX}"
 if [ -n $SAM_FORMAT ];then
     minimap2 -ax $PRESET --MD -t $THREADS $REF_FASTA $QUERY_FASTQ > $PREFIX.sam
     samtools view -bhS -@ $THREADS $PREFIX.sam | samtools sort -@ $THREADS -o $PREFIX.bam -
+    samtools index -@ $PREFIX.bam
     else
     minimap2 -x $PRESET --MD -t $THREADS $REF_FASTA $QUERY_FASTQ > $PREFIX.paf
 fi
