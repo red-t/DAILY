@@ -6,6 +6,7 @@ function help_info(){
     echo -e "\t-b <bam(s)>\tBAM files that used for downsampling."
     echo -e "\t-c <int>\tnumber of CPUs to use."
     echo -e "\t-d <depth(s)>\tsequencing depth of each BAM files."
+    echo -e "\t-f <format>\tbam/fastq/fasta."
     echo -e "\t-t <depth(s)>\ttarget depth to downsample."
     echo -e "\t-o <outdir>\tdirectory to output."
     echo -e "\t-h \tShow this information"
@@ -15,11 +16,12 @@ if [ $# -lt 1 ];then
     help_info && exit 1
 fi
 
-while getopts ":b:c:d:t:o:h" OPTION; do
+while getopts ":b:c:d:f:t:o:h" OPTION; do
     case $OPTION in
         b)  BAMs=($OPTARG);;
         c)  CPU=$OPTARG;;
         d)  R_DEPTH=($OPTARG);;
+        f)  FORMAT=$OPTARG;;
         t)  T_DEPTH=($OPTARG);;
         o)  OUT_PATH=$OPTARG;;
         h)  help_info && exit 1;;
@@ -31,24 +33,33 @@ done
 #############
 ## process ##
 [ -z ${CPU} ] && CPU=20
+[ -z ${FORMAT} ] && FORMAT="bam"
 [ -z ${OUT_PATH} ] && OUT_PATH="./"
 [ ! -d ${OUT_PATH} ] && mkdir ${OUT_PATH}
-SAMPLE_INDEX=0
 
+SAMPLE_INDEX=0
 for bam in ${BAMs[*]}
 do 
-    echo0 1 "downsampling for ${bam}" && date
     id=`basename ${bam}` && prefix=${id%.bam}
 
-    ## downsampling
+    # downsampling
     DEPTH_INDEX=0
     for tdepth in ${T_DEPTH[*]}
     do
-        fraction=$(awk -v rdepth=${R_DEPTH[${SAMPLE_INDEX}]} -v tdepth=${tdepth} 'BEGIN{printf "%u", (tdepth/rdepth)*100}')
-        samtools view -b -1 -@ ${CPU} -s ${SAMPLE_INDEX}.${fraction} -o ${OUT_PATH}/${prefix}.${tdepth}X.bam ${bam}
+        echo "downsampling ${bam} to ${tdepth}X start" && date
+        fraction=`awk -v rdepth=${R_DEPTH[${SAMPLE_INDEX}]} -v tdepth=${tdepth} 'BEGIN{printf "%u", (tdepth/rdepth)*100}'`
+        samtools view -h -b -@ ${CPU} -s ${SAMPLE_INDEX}.${fraction} -o ${OUT_PATH}/${prefix}.${tdepth}X.bam ${bam}
+        
+        # transfer BAM format into FASTQ/FASTA
+        if [ $FORMAT == 'fastq' ];then
+            samtools fastq -@ ${CPU} -1 ${OUT_PATH}/${prefix}_1.fq -2 ${OUT_PATH}/${prefix}_2.fq -0 /dev/null -s /dev/null -n ${OUT_PATH}/${prefix}.${tdepth}X.bam
+        elif [ $FORMAT == 'fasta' ];then
+            samtools fasta -@ ${CPU} ${OUT_PATH}/${prefix}.${tdepth}X.bam > ${OUT_PATH}/${prefix}.fa
+        fi
+
         DEPTH_INDEX=$((${DEPTH_INDEX} + 1))
+        echo "downsampling ${bam} to ${tdepth}X end" && date
     done
 
     SAMPLE_INDEX=$((${SAMPLE_INDEX} + 1))
-    date
 done
