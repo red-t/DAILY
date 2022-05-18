@@ -13,4 +13,5 @@ git pull origin main
 # git stash list
 
 # 清空暂存区。
-git stash clea
+git stash clear
+
