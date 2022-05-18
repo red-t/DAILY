@@ -49,12 +49,13 @@ do
         echo "downsampling ${bam} to ${tdepth}X start" && date
         fraction=`awk -v rdepth=${R_DEPTH[${SAMPLE_INDEX}]} -v tdepth=${tdepth} 'BEGIN{printf "%u", (tdepth/rdepth)*100}'`
         samtools view -h -b -@ ${CPU} -s ${SAMPLE_INDEX}.${fraction} -o ${OUT_PATH}/${prefix}.${tdepth}X.bam ${bam}
+        samtools index ${OUT_PATH}/${prefix}.${tdepth}X.bam
         
         # transfer BAM format into FASTQ/FASTA
         if [ $FORMAT == 'fastq' ];then
-            samtools fastq -@ ${CPU} -1 ${OUT_PATH}/${prefix}_1.fq -2 ${OUT_PATH}/${prefix}_2.fq -0 /dev/null -s /dev/null -n ${OUT_PATH}/${prefix}.${tdepth}X.bam
+            samtools fastq -@ ${CPU} -1 ${OUT_PATH}/${prefix}.${tdepth}X_1.fq -2 ${OUT_PATH}/${prefix}.${tdepth}X_2.fq -0 /dev/null -s /dev/null -n ${OUT_PATH}/${prefix}.${tdepth}X.bam
         elif [ $FORMAT == 'fasta' ];then
-            samtools fasta -@ ${CPU} ${OUT_PATH}/${prefix}.${tdepth}X.bam > ${OUT_PATH}/${prefix}.fa
+            samtools fasta -@ ${CPU} ${OUT_PATH}/${prefix}.${tdepth}X.bam > ${OUT_PATH}/${prefix}.${tdepth}X.fa
         fi
 
         DEPTH_INDEX=$((${DEPTH_INDEX} + 1))
