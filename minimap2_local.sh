@@ -38,6 +38,7 @@ PREFIX=`basename ${QUERY%.f*}`
 if [ -n $SAM_FORMAT ];then
     minimap2 -a -x $PRESET --MD -t $THREADS $REF_FASTA $QUERY > $PREFIX.sam
     samtools view -bhS -@ $THREADS $PREFIX.sam | samtools sort -@ $THREADS -o $PREFIX.bam -
+    samtools index $PREFIX.bam
     else
     minimap2 -x $PRESET --MD -t $THREADS $REF_FASTA $QUERY > $PREFIX.paf
 fi
