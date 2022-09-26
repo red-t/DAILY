@@ -65,3 +65,6 @@ do
 
     SAMPLE_INDEX=$((${SAMPLE_INDEX} + 1))
 done
+
+
+# downsample_bam.sh -b line_28_pacbio.bam -d 50 -f fasta -t "10 20 30 40" -o ./
