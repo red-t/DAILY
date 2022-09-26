@@ -76,5 +76,68 @@ make
 
 ### 使用测试数据尝试运行
 ```
+Lachesis INIS/test_case.ini
+```
 
+### 使用 Container 技术进行安装
+```
+# 安装 aakashsur 的镜像
+singularity pull --name lachesis_aakashur docker://aakashsur/lachesis
+
+# 安装 zitsens 的镜像
+singularity pull --name lachesis_zitsen docker://zitsen/lachesis
+```
+
+----
+
+## LACHESIS 程序 & 参数 & 结果 相关
+
+### GenomeLinkMatrix
+这是 **一种数据结构**，包含一个大小为 `_N_bins x _N_bins`，对应 `Hi-C heatmap` 的 `2-D Boost UBLAS compressed matrix`，这个数据结构所包含的方法如下：
+```
+- Load in Hi-C data from a set of SAM files. In a de novo GLM, each contig becomes a bin.
+
+- Using the SAM files, create a matrix of link density between each pair of bins.
+
+- Cluster these bins based on their link density. This creates a ClusterVec object. This is the main algorithm!
+
+- Analyze and validate the clusters.
+```
+简单来说，`GenomeLinkMatrix` 这个数据结构就是用于做 **“group clustering”** 的。而其中 **需要注意的点** 有：
+```
+Short and/or repetitive contigs can screw up the clustering algorithm. It's best to leave these contigs out of the clustering process, though they can optionally be assigned to clusters after the clusters have been made (see SetClusters).
+
+Use SkipShortContigs() to mark contigs for skipping if they are below a given size threshold.
+
+Use SkipContigsWithFewREs() to mark contigs for skipping if they don't have enough RE (restriction endonuclease) sites.
+
+Use SkipRepeats() to mark contigs for skipping if they are repetitive - i.e., they have a normalized number of Hi-C links that is much greater than average.
+```
+
+
+
+### heatmap.txt 文件
+由 `GenomeLinkMatrix.cc` 当中 `WriteFile` 函数生成，提供给 `heatmap.R` 脚本绘制热图，
+
+
+### CLM 文件
+LACHESIS 程序运行之后会生成 `CLM_file` , 也就是 `chromosome link matrix file`, 由 `ChromLinkMatrix.cc` 当中的 `WriteFile` 函数生成。其主要内容如下：
+```
+WriteFile: Write the data in this ChromLinkMatrix to file CLM_file. The output format is a long tall table with (4*_N_contigs^2) rows and three (or more) columns: X, Y, Z, [data]. X and Y are bin IDs (bin ID = 2 * contig ID + contig orientation). Z is an integer representing the amount of data in bin [X,Y]. If heatmap = false (default), then following Z is actually a tab-separated list of all the integers in bin [X,Y]. This format is designed for easy input to ChromLinkMatrix::ReadFile() (if heatmap = false), or to R (if heatmap = true). If this is a de novo CLM, also write the contig lengths to an auxiliary file.
+```
+
+CLM 文件名格式为 `groupN.CLM`, 内容示例如下：
+```
+# ChromLinkMatrix file - see ChromLinkMatrix.h for documentation of this object type
+# Species = wcr
+# De novo CLM? true
+# N_contigs = 1559
+# contig_size = 0 (ignored if a contig_lens_file is supplied)
+# contig_lens_file = lachesis_scaffold/round1/cached_data/group0.CLM.lens
+# RE_sites_file = lachesis_scaffold/round1/cached_data/group0.CLM.RE_sites
+# heatmap = false
+# SAM files used in generating this dataset: HiC/HiC-WCR-ov2-10cycle.REduced.paired_only.bam
+X       Y       Z       link_lengths
+2       2       2       152    76
+10      7       1       2431    106
 ```
