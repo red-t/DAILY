@@ -5,7 +5,7 @@
 #SBATCH -c 64
 #SBATCH --array=1-4
 #SBATCH --partition=12hours
-#SBATCH --output=/data/tusers/zhongrenhu/for_SMS/dna_pipline/TLDR_result/logs/minimap2-log-%A-%a.out
+#SBATCH --output=./logs/minimap2-log-%A-%a.out
 
 # Print a little info for debugging
 echo "HOSTNAME: " $(hostname)
@@ -51,7 +51,7 @@ done
 
 # Parameter initialization
 # List of input files, I make this with ls /path/to/folder/*.suffix | sort | pr -1aT -s' ' > filelist.txt
-[ -z $FILELIST ] && FILELIST=/data/tusers.ds/zhongrenhu/for_SMS/dna_pipline/TLDR_result/minimap2_filelist
+[ -z $FILELIST ] && FILELIST=/data/tusers/zhongrenhu/for_SMS/dna/simulation/dm3/test/minimap2_filelist
 [ -z $SAM_FORMAT ] && SAM_FORMAT=1
 [ -z $THREADS ] && THREADS=32
 
@@ -94,7 +94,7 @@ echo "Running minimap2 for ${PREFIX}"
 if [ -n $SAM_FORMAT ];then
     minimap2 -ax $PRESET --MD -t $THREADS $REF_FASTA $QUERY_FASTQ > $PREFIX.sam
     samtools view -bhS -@ $THREADS $PREFIX.sam | samtools sort -@ $THREADS -o $PREFIX.bam -
-    samtools index -@ $PREFIX.bam
+    samtools index -@ $THREADS $PREFIX.bam
     else
     minimap2 -x $PRESET --MD -t $THREADS $REF_FASTA $QUERY_FASTQ > $PREFIX.paf
 fi

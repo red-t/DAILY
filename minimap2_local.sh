@@ -8,13 +8,13 @@ function help_info(){
     echo -e "\t-a output in the SAM format (PAF by default)"
     echo -e "\t-t <threads>\tnumber of threads"
     echo -e "Preset:
-    -x STR       preset (always applied before other options; see minimap2.1 for details) []
-                 - map-pb/map-ont - PacBio CLR/Nanopore vs reference mapping
-                 - map-hifi - PacBio HiFi reads vs reference mapping
-                 - ava-pb/ava-ont - PacBio/Nanopore read overlap
-                 - asm5/asm10/asm20 - asm-to-ref mapping, for ~0.1/1/5% sequence divergence
-                 - splice/splice:hq - long-read/Pacbio-CCS spliced alignment
-                 - sr - genomic short-read mapping"
+    \t-x STR\tpreset (always applied before other options; see minimap2.1 for details) []
+    \t\t- map-pb/map-ont - PacBio CLR/Nanopore vs reference mapping
+    \t\t- map-hifi - PacBio HiFi reads vs reference mapping
+    \t\t- ava-pb/ava-ont - PacBio/Nanopore read overlap
+    \t\t- asm5/asm10/asm20 - asm-to-ref mapping, for ~0.1/1/5% sequence divergence
+    \t\t- splice/splice:hq - long-read/Pacbio-CCS spliced alignment
+    \t\t- sr - genomic short-read mapping"
     echo -e "\t-h \tShow this information"
 }
 

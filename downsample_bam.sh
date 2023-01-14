@@ -53,7 +53,9 @@ do
         
         # transfer BAM format into FASTQ/FASTA
         if [ $FORMAT == 'fastq' ];then
-            samtools fastq -@ ${CPU} -1 ${OUT_PATH}/${prefix}.${tdepth}X_1.fq -2 ${OUT_PATH}/${prefix}.${tdepth}X_2.fq -0 /dev/null -s /dev/null -n ${OUT_PATH}/${prefix}.${tdepth}X.bam
+            samtools sort -n -@ ${CPU} -o tmp.bam ${OUT_PATH}/${prefix}.${tdepth}X.bam
+            samtools fastq -@ ${CPU} -1 ${OUT_PATH}/${prefix}.${tdepth}X_1.fq -2 ${OUT_PATH}/${prefix}.${tdepth}X_2.fq -0 /dev/null -s /dev/null -n tmp.bam
+            rm tmp.bam
         elif [ $FORMAT == 'fasta' ];then
             samtools fasta -@ ${CPU} ${OUT_PATH}/${prefix}.${tdepth}X.bam > ${OUT_PATH}/${prefix}.${tdepth}X.fa
             samtools faidx ${OUT_PATH}/${prefix}.${tdepth}X.fa
